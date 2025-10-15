@@ -1,5 +1,10 @@
 Necmihan AKSU
 250541086
+
+
+
+
+
 // Veri Yapısı Tanımlamaları
 YAPI Urun:
     DEĞİŞKEN UrunID: TamSayı
