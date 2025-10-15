@@ -1,5 +1,10 @@
 Necmihan AKSU
 250541086
+
+
+
+
+
 // Veri Yapısı Tanımlamaları (Basitlik için varsayımsal)
 DEĞİŞKEN Hastalar: Veritabanı
 DEĞİŞKEN Doktorlar: Veritabanı (Branş ve Çalışma Saatleri içerir)
