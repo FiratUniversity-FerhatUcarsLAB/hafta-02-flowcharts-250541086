@@ -1,5 +1,12 @@
  İsim - Soy isim Necmihan AKSU
 Öğrenci No:250541086
+
+
+
+
+
+
+
 // Başlangıç Verileri
 DEĞİŞKEN Bakiye = 2000
 DEĞİŞKEN Gunluk_Limit = 1000
