@@ -1,0 +1,55 @@
+digraph RandevuSistemi {
+    rankdir=TB;
+    node [shape=rectangle, style=rounded, fontname="Arial"];
+
+    Start [label="BAŞLA"];
+    Welcome [label="Randevu Sistemine Hoş Geldiniz.", shape=rectangle];
+
+    // Kimlik Doğrulama
+    LoopKimlik [label="DÖNGÜ: TC Kimlik Girişi"];
+    InputTC [label="T.C. Kimlik Numarasını girin", shape=parallelogram];
+    CheckTC [label="TC Kimlik veritabanında var mı?", shape=diamond];
+    InvalidTC [label="Hata: Geçersiz Kimlik\nTekrar dene veya kayıt ol", shape=rectangle];
+
+    // Branş seçimi
+    SelectBranch [label="Branş Seç (Örn: Kardiyoloji, Dahiliye)", shape=parallelogram];
+
+    // Doktor ve Tarih Seçimi
+    LoopRandevu [label="DÖNGÜ: Doktor ve Tarih Seçimi"];
+    FilterDoctors [label="Seçilen branşa göre uygun doktorları listele", shape=rectangle];
+    NoDoctors [label="Seçilen branşta uygun doktor bulunamadı.\nSON", shape=oval];
+
+    InputDoctorDate [label="Doktor ve Tarih (GG/AA/YYYY) seçin", shape=parallelogram];
+    CheckSlots [label="Seçilen doktor ve tarihte uygun saat var mı?", shape=diamond];
+
+    // Uygun Saatler
+    ShowSlots [label="Mevcut randevu saatlerini göster", shape=rectangle];
+    InputHour [label="Saat seçin", shape=parallelogram];
+    SaveAppointment [label="Randevuyu veritabanına kaydet\nOnay kodu ver", shape=rectangle];
+    Success [label="Randevunuz başarıyla oluşturuldu!", shape=rectangle];
+
+    // Uygun saat yoksa
+    NoSlots [label="Seçilen tarihte uygun saat yok\nBaşka doktor/tarih seçin", shape=rectangle];
+
+    End [label="SON", shape=oval];
+
+    // Akışlar
+    Start -> Welcome -> LoopKimlik -> InputTC -> CheckTC;
+
+    CheckTC -> InvalidTC [label="Hayır"];
+    InvalidTC -> LoopKimlik;
+
+    CheckTC -> SelectBranch [label="Evet"];
+
+    SelectBranch -> LoopRandevu -> FilterDoctors;
+    FilterDoctors -> NoDoctors [label="0 doktor"];
+    FilterDoctors -> InputDoctorDate [label="Var"];
+
+    InputDoctorDate -> CheckSlots;
+
+    CheckSlots -> ShowSlots [label="Evet"];
+    ShowSlots -> InputHour -> SaveAppointment -> Success -> End;
+
+    CheckSlots -> NoSlots [label="Hayır"];
+    NoSlots -> LoopRandevu;
+}
