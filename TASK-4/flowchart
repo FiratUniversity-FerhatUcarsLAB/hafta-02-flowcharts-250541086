@@ -1,0 +1,90 @@
+digraph DersKayitSistemi {
+    rankdir=TB;
+    node [shape=rectangle, style=rounded, fontname="Arial"];
+
+    // Ana süreç
+    Start [label="BAŞLA"];
+    Welcome [label="Üniversite Ders Kayıt Sistemine Hoş Geldiniz."];
+    LoopStart [label="DÖNGÜ BAŞLANGICI"];
+
+    Menu [label="1. Ders Ekle\n2. Ders Sil\n3. Kaydı Tamamla\n4. Çıkış", shape=parallelogram];
+    InputSecim [label="Secim Al", shape=parallelogram];
+
+    Check1 [label="Secim = 1 ?", shape=diamond];
+    Check2 [label="Secim = 2 ?", shape=diamond];
+    Check3 [label="Secim = 3 ?", shape=diamond];
+    Check4 [label="Secim = 4 ?", shape=diamond];
+
+    DersEkle [label="PROSEDÜR Ders_Ekle()"];
+    DersSil [label="PROSEDÜR Ders_Sil()"];
+    Kayit [label="PROSEDÜR Kaydi_Tamamla()"];
+    ExitNoSave [label="Kayıt yapılmadan çıkılıyor."];
+    Invalid [label="Geçersiz seçim!"];
+
+    End [label="SON", shape=oval];
+
+    // Ders ekleme prosedürü
+    InputKod [label="Ders kodunu gir", shape=parallelogram];
+    CheckKod [label="Ders kodu mevcut mu?", shape=diamond];
+    KodError [label="Hata: Ders bulunamadı"];
+
+    CheckOnkosul [label="Önkoşul sağlandı mı?", shape=diamond];
+    OnkosulError [label="Hata: Önkoşul dersi geçilmemiş"];
+
+    CheckKredi [label="Kredi limiti aşılır mı?", shape=diamond];
+    KrediError [label="Hata: Kredi limiti aşılıyor"];
+
+    CheckKontenjan [label="Kontenjan dolu mu?", shape=diamond];
+    KontenjanError [label="Hata: Kontenjan dolmuş"];
+
+    SuccessAdd [label="Ders eklendi\nKredi güncellendi\nKontenjan azaltıldı"];
+
+    // Kayıt tamamlama
+    CheckSecilen [label="Seçilen dersler boş mu?", shape=diamond];
+    SuccessReg [label="Ders kaydı onaylandı\nSeçilen dersler listelendi"];
+    EmptyReg [label="Hata: Hiç ders seçilmedi"];
+
+    // Akışlar
+    Start -> Welcome -> LoopStart -> Menu -> InputSecim -> Check1;
+
+    Check1 -> DersEkle [label="Evet"];
+    DersEkle -> InputKod -> CheckKod;
+    CheckKod -> KodError [label="Hayır"];
+    KodError -> LoopStart;
+
+    CheckKod -> CheckOnkosul [label="Evet"];
+    CheckOnkosul -> OnkosulError [label="Hayır"];
+    OnkosulError -> LoopStart;
+
+    CheckOnkosul -> CheckKredi [label="Evet"];
+    CheckKredi -> KrediError [label="Evet"];
+    KrediError -> LoopStart;
+
+    CheckKredi -> CheckKontenjan [label="Hayır"];
+    CheckKontenjan -> KontenjanError [label="Evet"];
+    KontenjanError -> LoopStart;
+
+    CheckKontenjan -> SuccessAdd [label="Hayır"];
+    SuccessAdd -> LoopStart;
+
+    Check1 -> Check2 [label="Hayır"];
+    Check2 -> DersSil [label="Evet"];
+    DersSil -> LoopStart;
+
+    Check2 -> Check3 [label="Hayır"];
+    Check3 -> Kayit [label="Evet"];
+    Kayit -> CheckSecilen;
+
+    CheckSecilen -> SuccessReg [label="Hayır"];
+    SuccessReg -> End;
+
+    CheckSecilen -> EmptyReg [label="Evet"];
+    EmptyReg -> End;
+
+    Check3 -> Check4 [label="Hayır"];
+    Check4 -> ExitNoSave [label="Evet"];
+    ExitNoSave -> End;
+
+    Check4 -> Invalid [label="Hayır"];
+    Invalid -> LoopStart;
+}
