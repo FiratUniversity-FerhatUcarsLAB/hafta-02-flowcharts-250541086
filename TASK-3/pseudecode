@@ -1,0 +1,55 @@
+// Veri Yapısı Tanımlamaları (Basitlik için varsayımsal)
+DEĞİŞKEN Hastalar: Veritabanı
+DEĞİŞKEN Doktorlar: Veritabanı (Branş ve Çalışma Saatleri içerir)
+DEĞİŞKEN Randevular: Veritabanı (Tarih, Saat, HastaID, DoktorID içerir)
+
+PROSEDÜR Randevu_Olustur
+BAŞLA
+    EKRANA_YAZ "Randevu Sistemine Hoş Geldiniz."
+    
+    // Adım 1: Kimlik Doğrulama/Hasta Girişi
+    DÖNGÜ:
+        EKRANA_YAZ "Lütfen T.C. Kimlik Numaranızı girin:"
+        OKU TC_Kimlik
+        EĞER TC_Kimlik Veritabaninda_Var_mi() O ZAMAN
+            DÖNGÜDEN_ÇIK
+        YOKSA
+            EKRANA_YAZ "Hata: Geçersiz T.C. Kimlik. Tekrar deneyin veya kayıt olun."
+        BİTİR EĞER
+    DÖNGÜ BİTİŞİ
+    
+    // Adım 2: Branş Seçimi
+    EKRANA_YAZ "Randevu almak istediğiniz Branşı seçin (örn: Kardiyoloji, Dahiliye):"
+    OKU Secilen_Brans
+    
+    // Adım 3: Doktor ve Tarih Seçimi
+    
+    DÖNGÜ:
+        Uygun_Doktorlar = Doktorlar'ı Secilen_Brans'a göre filtrele
+        
+        EĞER Uygun_Doktorlar'ın sayısı = 0 O ZAMAN
+            EKRANA_YAZ "Seçtiğiniz branşta uygun doktor bulunmamaktadır."
+            SON
+        BİTİR EĞER
+
+        EKRANA_YAZ "Lütfen Doktor ve Randevu Tarihi seçin (GG/AA/YYYY):"
+        OKU Secilen_DoktorID, Secilen_Tarih
+        
+        // Adım 4: Boş Randevu Slotlarını Bulma
+        Uygun_Saatler = Secilen_DoktorID ve Secilen_Tarih'e göre Randevular'ı kontrol et
+        
+        EĞER Uygun_Saatler'in sayısı > 0 O ZAMAN
+            EKRANA_YAZ "Mevcut Randevu Saatleri:" + Uygun_Saatler
+            EKRANA_YAZ "Lütfen bir saat seçin:"
+            OKU Secilen_Saat
+
+            // Adım 5: Randevuyu Kaydetme
+            Randevu_Kaydi = YENİ Randevu nesnesi oluştur(TC_Kimlik, Secilen_DoktorID, Secilen_Tarih, Secilen_Saat)
+            Randevular Veritabanına Randevu_Kaydi'ni ekle
+            
+            EKRANA_YAZ "Randevunuz Başarıyla Oluşturuldu! Onay Kodu: [XXXX]"
+            DÖNGÜDEN_ÇIK
+        YOKSA
+            EKRANA_YAZ "Seçilen tarihte uygun saat bulunamadı. Lütfen doktor veya tarihi değiştirin."
+        BİTİR EĞER
+    DÖNGÜ BİTİŞİ
