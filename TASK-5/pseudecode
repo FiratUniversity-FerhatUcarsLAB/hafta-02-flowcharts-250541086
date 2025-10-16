@@ -1,0 +1,88 @@
+// Başlangıç Verileri
+DEĞİŞKEN Sistem_Durumu = "DEVRE_DISI" // Olası Değerler: DEVREDE, DEVRE_DISI
+DEĞİŞKEN Alarm_Durumu = "PASIF"   // Olası Değerler: PASIF, AKTIF
+DEĞİŞKEN Hareket_Algilandi = YANLIS
+
+PROSEDÜR Akilli_Ev_Guvenlik_Sistemi
+BAŞLA
+    // Sistem Açılışı
+    EKRANA_YAZ "Akıllı Ev Güvenlik Sistemi Başlatılıyor."
+    
+    // Ana Kontrol Döngüsü
+    DÖNGÜ SÜRESİNCE DOGRU
+        EKRANA_YAZ "1. Sistemi Devreye Al, 2. Sistemi Devre Dışı Bırak, 3. Durum Kontrolü"
+        OKU Secim
+
+        EĞER Secim = 1 O ZAMAN
+            Sistem_Durumu = "DEVREDE"
+            EKRANA_YAZ "Güvenlik Sistemi Devrede. İzleme Başlatıldı."
+            
+            // İzleme Döngüsü Başlat
+            ÇAĞIR PROSEDÜR Izleme_Yap()
+
+        YOKSA EĞER Secim = 2 O ZAMAN
+            Sistem_Durumu = "DEVRE_DISI"
+            EĞER Alarm_Durumu = "AKTIF" O ZAMAN
+                Alarm_Durumu = "PASIF"
+                ÇAĞIR PROSEDÜR Alarm_Sustur()
+            BİTİR EĞER
+            EKRANA_YAZ "Güvenlik Sistemi Devre Dışı."
+
+        YOKSA EĞER Secim = 3 O ZAMAN
+            EKRANA_YAZ "Güncel Durum: " + Sistem_Durumu + ", Alarm: " + Alarm_Durumu
+            
+        YOKSA
+            EKRANA_YAZ "Geçersiz seçim."
+        BİTİR EĞER
+    DÖNGÜ BİTİŞİ
+SON
+
+PROSEDÜR Izleme_Yap()
+    DÖNGÜ SÜRESİNCE Sistem_Durumu = "DEVREDE"
+        
+        // Sensör Verilerini Oku (Hareket, Kapı/Pencere Sensörleri vb.)
+        Hareket_Algilandi = SENSOR_VERISI_OKU() // Varsayımsal fonksiyon
+        
+        // Kontrol: İhlal Var mı?
+        EĞER Hareket_Algilandi = DOGRU O ZAMAN
+            
+            EĞER Alarm_Durumu = "PASIF" O ZAMAN
+                // İhlal Tespit Edildi
+                Alarm_Durumu = "AKTIF"
+                EKRANA_YAZ "!!! İHLAL TESPİT EDİLDİ !!!"
+                
+                // Bildirim ve Alarm İşlemleri
+                ÇAĞIR PROSEDÜR Alarm_Cal()
+                ÇAĞIR PROSEDÜR Kullaniciya_Bildirim_Gonder("Hareket Algılandı.")
+                
+                // Kullanıcı Girişi Bekleme (PIN/Şifre ile kapatma)
+                DÖNGÜ SÜRESİNCE Alarm_Durumu = "AKTIF"
+                    EKRANA_YAZ "Alarmı Devre Dışı Bırakmak için Şifreyi Girin:"
+                    OKU Sifre_Girisi
+                    
+                    EĞER Sifre_Girisi = GECERLI_SIFRE O ZAMAN
+                        Alarm_Durumu = "PASIF"
+                        ÇAĞIR PROSEDÜR Alarm_Sustur()
+                        EKRANA_YAZ "Alarm Devre Dışı Bırakıldı."
+                    BİTİR EĞER
+                DÖNGÜ BİTİŞİ
+            BİTİR EĞER
+        BİTİR EĞER
+        BEKLE(1 saniye) // Kontrol aralığı
+    DÖNGÜ BİTİŞİ
+BİTİR PROSEDÜR
+
+PROSEDÜR Alarm_Cal()
+    // Siren, ışık yakma vb. işlemleri simüle eder
+    EKRANA_YAZ "SİREN ÇALIYOR..."
+BİTİR PROSEDÜR
+
+PROSEDÜR Alarm_Sustur()
+    // Siren susturma işlemini simüle eder
+    EKRANA_YAZ "SİREN SUSTURULDU."
+BİTİR PROSEDÜR
+
+PROSEDÜR Kullaniciya_Bildirim_Gonder(Mesaj)
+    // SMS, uygulama bildirimi vb. simüle eder
+    EKRANA_YAZ "Kullanıcıya Bildirim Gönderildi: " + Mesaj
+BİTİR PROSEDÜR
