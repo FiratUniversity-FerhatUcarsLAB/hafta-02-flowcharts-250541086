@@ -1,0 +1,24 @@
+digraph AlisverisSepeti {
+    rankdir=TB;
+    node [shape=rectangle, style=rounded, fontname="Arial"];
+
+    Start [label="BAŞLA"];
+    Init [label="Sepet = Yeni Liste()"];
+    LoopStart [label="DÖNGÜ BAŞLANGICI"];
+
+    Menu [label="Menü:\n1. Ürün Ekle\n2. Ürün Sil\n3. Sepeti Görüntüle\n4. Toplamı Hesapla\n5. Çıkış", shape=parallelogram];
+    Secim [label="Secim Al", shape=parallelogram];
+
+    Check1 [label="Secim = 1 ?", shape=diamond];
+    Check2 [label="Secim = 2 ?", shape=diamond];
+    Check3 [label="Secim = 3 ?", shape=diamond];
+    Check4 [label="Secim = 4 ?", shape=diamond];
+    Check5 [label="Secim = 5 ?", shape=diamond];
+
+    UrunEkle [label="PROSEDÜR Urun_Ekle(Sepet)"];
+    UrunSil [label="PROSEDÜR Urun_Sil(Sepet)"];
+    SepetGor [label="PROSEDÜR Sepeti_Goruntule(Sepet)"];
+    Toplam [label="PROSEDÜR Toplami_Hesapla(Sepet)"];
+    Invalid [label="Geçersiz seçim!"];
+
+    EndLoop [label="Döngü So]()
