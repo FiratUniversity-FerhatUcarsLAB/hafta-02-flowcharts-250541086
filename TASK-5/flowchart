@@ -1,0 +1,72 @@
+digraph AkilliEvGuvenlik {
+    rankdir=TB;
+    node [shape=rectangle, style=rounded, fontname="Arial"];
+
+    // Ana prosedür
+    Start [label="BAŞLA"];
+    Init [label="Akıllı Ev Güvenlik Sistemi Başlatılıyor."];
+    LoopMain [label="Ana Menü Döngüsü"];
+
+    Menu [label="1. Devreye Al\n2. Devre Dışı Bırak\n3. Durum Kontrolü", shape=parallelogram];
+    InputSecim [label="Secim Al", shape=parallelogram];
+
+    Check1 [label="Secim = 1 ?", shape=diamond];
+    Check2 [label="Secim = 2 ?", shape=diamond];
+    Check3 [label="Secim = 3 ?", shape=diamond];
+
+    Devrede [label="Sistem_Durumu = DEVREDE\nİzleme Başlat"];
+    CallIzleme [label="PROSEDÜR Izleme_Yap()"];
+
+    Disable [label="Sistem_Durumu = DEVRE_DISI"];
+    CheckAlarm [label="Alarm_Durumu = AKTIF ?", shape=diamond];
+    StopAlarm [label="PROSEDÜR Alarm_Sustur()"];
+    DisableMsg [label="Güvenlik Sistemi Devre Dışı"];
+
+    ShowStatus [label="Durum Yazdır:\nSistem_Durumu, Alarm_Durumu"];
+    Invalid [label="Geçersiz seçim"];
+
+    // İzleme prosedürü
+    LoopIzleme [label="Döngü: Sistem DEVREDE iken"];
+    ReadSensor [label="Sensör verisi oku (hareket algılandı mı?)"];
+    CheckMotion [label="Hareket algılandı mı?", shape=diamond];
+    CheckAlarmState [label="Alarm PASIF mi?", shape=diamond];
+
+    TriggerAlarm [label="Alarm_Durumu = AKTIF\n!!! İhlal Tespit Edildi !!!"];
+    AlarmActions [label="PROSEDÜR Alarm_Cal()\nPROSEDÜR Kullaniciya_Bildirim_Gonder()"];
+
+    LoopAlarm [label="Döngü: Alarm AKTIF iken"];
+    AskPIN [label="Şifre giriniz:", shape=parallelogram];
+    CheckPIN [label="Şifre doğru mu?", shape=diamond];
+    StopAlarm2 [label="Alarm PASIF yap\nAlarm_Sustur()\nAlarm Devre Dışı Mesajı"];
+
+    Wait [label="Bekle(1 saniye)"];
+
+    End [label="SON", shape=oval];
+
+    // Ana akış
+    Start -> Init -> LoopMain -> Menu -> InputSecim -> Check1;
+
+    Check1 -> Devrede [label="Evet"];
+    Devrede -> CallIzleme -> LoopIzleme;
+
+    Check1 -> Check2 [label="Hayır"];
+    Check2 -> Disable [label="Evet"];
+    Disable -> CheckAlarm;
+    CheckAlarm -> StopAlarm [label="Evet"];
+    StopAlarm -> DisableMsg;
+    CheckAlarm -> DisableMsg [label="Hayır"];
+    DisableMsg -> LoopMain;
+
+    Check2 -> Check3 [label="Hayır"];
+    Check3 -> ShowStatus [label="Evet"];
+    ShowStatus -> LoopMain;
+
+    Check3 -> Invalid [label="Hayır"];
+    Invalid -> LoopMain;
+
+    // İzleme prosedürü akışı
+    LoopIzleme -> ReadSensor -> CheckMotion;
+    CheckMotion -> Wait [label="Hayır"];
+    Wait -> LoopIzleme;
+
+    CheckMotion -> CheckAlarmState [label="Eve]()
